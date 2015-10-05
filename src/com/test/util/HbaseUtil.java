@@ -9,6 +9,7 @@ import org.apache.hadoop.hbase.HColumnDescriptor;
 import org.apache.hadoop.hbase.HTableDescriptor;
 import org.apache.hadoop.hbase.KeyValue;
 import org.apache.hadoop.hbase.client.Delete;
+import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.HBaseAdmin;
 import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.HTableInterface;
@@ -161,22 +162,31 @@ public class HbaseUtil {
 
 	}
 
-	// 读取一条记录
-	/*
-	 * @SuppressWarnings({ "deprecation", "resource" }) public Article
-	 * get(String tableName, String row) { HTablePool hTablePool = new
-	 * HTablePool(conf, 1000); HTableInterface table =
-	 * hTablePool.getTable(tableName); Get get = new Get(row.getBytes());
-	 * Article article = null; try {
+	/**
+	 * 查询一条记录
 	 * 
-	 * Result result = table.get(get); KeyValue[] raw = result.raw(); if
-	 * (raw.length == 4) { article = new Article(); article.setId(row);
-	 * article.setTitle(new String(raw[3].getValue())); article.setAuthor(new
-	 * String(raw[0].getValue())); article.setContent(new
-	 * String(raw[1].getValue())); article.setDescribe(new
-	 * String(raw[2].getValue())); } } catch (IOException e) {
-	 * e.printStackTrace(); } return article; }
+	 * @param tableName
+	 * @param rowKey
 	 */
+	@SuppressWarnings("deprecation")
+	public void getKey(String tableName, String rowKey) {
+		HTablePool hTable = new HTablePool(conf, 1000);
+		HTableInterface table = hTable.getTable(tableName);
+		Get get = new Get(rowKey.getBytes());
+		try {
+			Result rs = table.get(get);
+			if (rs.raw().length == 0) {
+				System.out.println("不存在关键字为 " + rowKey + " 的行！");
+			} else {
+				for (KeyValue kv : rs.raw()) {
+					System.out.println(new String(kv.getKey()) + "\t"
+							+ new String(kv.getValue()));
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	// 添加一条记录
 	public void put(String tableName, String row, String columnFamily,
@@ -189,6 +199,32 @@ public class HbaseUtil {
 		table.put(p1);
 		System.out.println("put'" + row + "'," + columnFamily + ":" + column
 				+ "','" + data + "'");
+	}
+
+	/**
+	 * 往表中添加一条记录
+	 * 
+	 * @param tableName
+	 * @param rowKey
+	 * @param family
+	 * @param column
+	 * @param value
+	 */
+	public boolean addOneRecord(String tableName, String rowKey, String family,
+			String column, byte[] value) {
+		HTablePool hTable = new HTablePool(conf, 1000);
+		HTableInterface table = hTable.getTable(tableName);
+		Put put = new Put(rowKey.getBytes());
+		put.add(family.getBytes(), column.getBytes(), value);
+		try {
+			table.put(put);
+			System.out.println("添加记录 " + rowKey + " 成功！");
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+			System.out.println("添加记录 " + rowKey + " 成功！");
+			return false;
+		}
 	}
 
 	/**
@@ -223,7 +259,7 @@ public class HbaseUtil {
 			System.out.println(tableName + "表已经存在！");
 		} else {
 			HTableDescriptor tableDesc = new HTableDescriptor(tableName);
-			tableDesc.addFamily(new HColumnDescriptor(column.getBytes()));
+			tableDesc.addFamily(new HColumnDescriptor(column));
 			admin.createTable(tableDesc);
 			System.out.println(tableName + "表创建成功！");
 		}

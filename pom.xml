@@ -4,7 +4,6 @@
 	<groupId>com.test.UtilSummary</groupId>
 	<artifactId>UtilSummary</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-
 	<dependencies>
 
 		<dependency>
@@ -18,11 +17,14 @@
 			<version>0.98.8-hadoop2</version>
 		</dependency>
 
-
+		<dependency>
+			<!-- 在使用mr对hbase导入数据时需要用到org.apache.hadoop.hbase.mapreduce.TableOutputFormat -->
+			<groupId>org.apache.hbase</groupId>
+			<artifactId>hbase-server</artifactId>
+			<version>0.98.8-hadoop2</version>
+		</dependency>
 
 	</dependencies>
-
-
 
 
 
