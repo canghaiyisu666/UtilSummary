@@ -17,7 +17,11 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
-
+/**
+ * 通过MR批量把hdfs某个目录下的文件导入到hbase中
+ * @author Administrator
+ *
+ */
 public class HbaseImport {
 	static class BatchImportMapper extends
 			Mapper<LongWritable, Text, LongWritable, Text> {
