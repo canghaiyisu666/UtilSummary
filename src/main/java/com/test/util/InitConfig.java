@@ -3,7 +3,6 @@ package com.test.util;
 public class InitConfig {
 	
 	//httpservlet 实现了serializable 接口。所以这里的id的作用就是用来标识这个对象写入文件后的标识。
-	private static final long serialVersionUID = 3994980056352080271L; 
 	
 	public static final String BASEPATH = ConfigContext.getInstance().getString("basePath"); // 算子父目录
 	public static final String STDERR = ConfigContext.getInstance().getString("stderr"); // 标准输出信息保存文件路径
